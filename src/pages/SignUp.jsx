@@ -1,9 +1,19 @@
 import React, { useState } from "react";
-import { icons } from "react-icons";
 import { AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import OAuth from "../components/OAuth";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
+import { db } from "../firebase";
+import { serverTimestamp, setDoc, doc } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+
 export default function SignUp() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -19,6 +29,31 @@ export default function SignUp() {
   };
 
   const onClick = () => setShowPassword((state) => !state);
+
+  const onSubmit = async (event) => {
+    event.preventDefault();
+
+    try {
+      const auth = getAuth();
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      updateProfile(auth.currentUser, {
+        displayName: name,
+      });
+      const user = userCredential.user;
+      const userInfor = { ...formData };
+      delete userInfor.password;
+      userInfor.timestamp = serverTimestamp();
+      await setDoc(doc(db, "users", user.uid), userInfor);
+      navigate("/");
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
   return (
     <section>
       <h1 className="text-center text-3xl mt-6 font-bold">Sign Up</h1>
@@ -31,7 +66,7 @@ export default function SignUp() {
           />
         </div>
         <div className="w-full md:w-[67%] lg:w-[40%] lg:ml-20">
-          <form>
+          <form onSubmit={onSubmit}>
             <input
               type="text"
               id="name"
@@ -71,7 +106,7 @@ export default function SignUp() {
             </div>
             <div className="flex justify-between whitespace-nowrap text-sm md:text-lg">
               <p className="mb-6">
-                Have an account?{" "}
+                Have an account?
                 <Link
                   to="/sign-in"
                   className="text-red-500 hover:text-red-700 transition duration-300 ease-in-out ml-1"
@@ -92,7 +127,7 @@ export default function SignUp() {
               className="w-full bg-blue-500 px-7 py-3 text-sm text-white font-medium uppercase rounded shadow-md hover:bg-blue-600 transition duration-300 ease-in-out
           active:bg-blue-700 hover:shadow-lg"
             >
-              Sign In
+              Sign Up
             </button>
             <div className="my-4 flex items-center  before:border-t  before:flex-1 before:border-gray-300 after:border-t  after:flex-1 after:border-gray-300">
               <p className="text-center mx-4">OR</p>
