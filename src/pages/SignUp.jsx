@@ -48,6 +48,7 @@ export default function SignUp() {
       delete userInfor.password;
       userInfor.timestamp = serverTimestamp();
       await setDoc(doc(db, "users", user.uid), userInfor);
+      console.log(userInfor);
       navigate("/");
     } catch (error) {
       toast.error(error.message);
