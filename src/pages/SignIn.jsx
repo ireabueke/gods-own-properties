@@ -1,9 +1,13 @@
 import React, { useState } from "react";
 import { icons } from "react-icons";
 import { AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import OAuth from "../components/OAuth";
+import { signInWithEmailAndPassword, getAuth } from "firebase/auth";
+import { toast, Toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 export default function SignIn() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -15,6 +19,23 @@ export default function SignIn() {
       ...state,
       [e.target.id]: e.target.value,
     }));
+  };
+
+  const onSignIn = async (e) => {
+    e.preventDefault();
+    try {
+      const auth = getAuth();
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      if (userCredential.user) {
+        navigate("/");
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
 
   const onClick = () => setShowPassword((state) => !state);
@@ -30,7 +51,7 @@ export default function SignIn() {
           />
         </div>
         <div className="w-full md:w-[67%] lg:w-[40%] lg:ml-20">
-          <form>
+          <form onSubmit={onSignIn}>
             <input
               type="email"
               id="email"
