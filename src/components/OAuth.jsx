@@ -14,8 +14,8 @@ export default function OAuth() {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-      console.log(user);
-      //check if the user information is already in the firebase database if not add ithe user information
+      // console.log(user);
+      // //check if the user information is already in the firebase database if not add ithe user information
 
       const docRef = doc(db, "users", user.uid);
       const docSnap = await getDoc(docRef);
@@ -26,7 +26,7 @@ export default function OAuth() {
           timestamp: serverTimestamp(),
         });
       }
-      navigate("/");
+      navigate("/profile");
     } catch (error) {
       toast.error(error.message);
     }
