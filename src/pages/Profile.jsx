@@ -7,14 +7,17 @@ import { toast } from "react-toastify";
 import { db } from "../firebase";
 
 export default function Profile() {
+  const auth = getAuth();
   const [formData, setFormData] = useState({
-    name: "auth.currentUser.name",
+    name: auth.currentUser.name,
     email: "auth.currentUser.email",
   });
+
   const [changeDetail, setChangeDetail] = useState(false);
   const { name, email } = formData;
   const navigate = useNavigate();
-  const auth = getAuth();
+
+  console.log(name);
   const logOut = () => {
     auth.signOut();
     navigate("/");
@@ -29,7 +32,7 @@ export default function Profile() {
 
   const applyChange = async () => {
     try {
-      if (auth.currentUser.displayName != name) {
+      if (auth.currentUser.displayName !== name) {
         // update user name in the firebase auth
         await updateProfile(auth.currentUser, {
           displayName: name,

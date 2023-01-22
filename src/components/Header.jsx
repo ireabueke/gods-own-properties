@@ -20,7 +20,7 @@ export default function Header() {
     });
   });
   return (
-    <div className="bg-gray-100 border-b shadow-lg sticky top-0 z-50">
+    <div className="bg-gray-100 border-b shadow-lg sticky top-0 z-40">
       <header className="flex justify-between  items-center px-3 max-w-6xl mx-auto">
         <div>
           <img
